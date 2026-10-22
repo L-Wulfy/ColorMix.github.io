@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ColorAlchemy - Laboratoř míchání barev</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Hlavička -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon"></div>
+        <div>
+          <h1 class="brand-title">ColorAlchemy</h1>
+          <p class="brand-subtitle">Laboratoř digitálního a fyzikálního míchání barev</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Volba algoritmu míchání -->
+        <div class="mode-toggle" id="modeToggle">
+          <button type="button" class="mode-btn active" data-mode="pigment" id="btnModePigment">
+            🎨 Pigment (Fyzický)
+          </button>
+          <button type="button" class="mode-btn" data-mode="rgb" id="btnModeRgb">
+            💡 RGB (Světlo)
+          </button>
+        </div>
+
+        <!-- Tmavý / Světlý režim -->
+        <button type="button" class="btn btn-icon" id="themeToggleBtn" title="Přepnout motiv">
+          🌓
+        </button>
+      </div>
+    </header>
+
+    <!-- Karta s barevnými složkami (Vstupy 2-8) -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">
+            Barevné složky
+            <span class="badge" id="slotCountBadge">3 / 8</span>
+          </h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+            Nastavte barvy, jejich poměr (dávkování) nebo použijte kapátko
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <!-- Rychlé předvolby -->
+          <select id="presetSelect" class="btn" style="padding: 7px 10px; font-size: 0.8rem;">
+            <option value="">⚡ Rychlá předvolba...</option>
+            <option value="painter">Malířské primární (Červená, Žlutá, Modrá)</option>
+            <option value="cmyk">Tiskové CMYK (Cyan, Magenta, Yellow)</option>
+            <option value="warm">Západ slunce (Teplé tóny)</option>
+            <option value="ocean">Hluboký oceán (Chladné tóny)</option>
+          </select>
+
+          <button type="button" class="btn" id="addSlotBtn">
+            <span>+</span> Přidat barvu
+          </button>
+          <button type="button" class="btn" id="resetBtn" title="Obnovit výchozí barvy">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Mřížka slotů (generováno JS) -->
+      <div class="slots-grid" id="slotsContainer"></div>
+    </section>
+
+    <!-- Výsledná směs -->
+    <section class="result-card">
+      <div class="result-swatch-box" id="resultSwatchBox" style="background-color: #3B82F6;"></div>
+
+      <div class="result-details">
+        <div class="result-name-wrapper">
+          <div class="result-tag" id="modeIndicatorTag">Fyzikální pigmentová směs</div>
+          <h2 class="result-name" id="colorNameDisplay">Načítání...</h2>
+        </div>
+
+        <!-- Kódy s kopírováním na 1 klik -->
+        <div class="color-codes-grid">
+          <button type="button" class="code-chip" data-copy="hex" id="copyHexBtn" title="Klikněte pro zkopírování HEX">
+            <span class="chip-label">HEX</span>
+            <span id="hexValue">#3B82F6</span>
+          </button>
+
+          <button type="button" class="code-chip" data-copy="rgb" id="copyRgbBtn" title="Klikněte pro zkopírování RGB">
+            <span class="chip-label">RGB</span>
+            <span id="rgbValue">rgb(59, 130, 246)</span>
+          </button>
+
+          <button type="button" class="code-chip" data-copy="hsl" id="copyHslBtn" title="Klikněte pro zkopírování HSL">
+            <span class="chip-label">HSL</span>
+            <span id="hslValue">hsl(217, 91%, 60%)</span>
+          </button>
+
+          <button type="button" class="code-chip" data-copy="cmyk" id="copyCmykBtn" title="Klikněte pro zkopírování CMYK">
+            <span class="chip-label">CMYK</span>
+            <span id="cmykValue">cmyk(76%, 47%, 0%, 4%)</span>
+          </button>
+
+          <button type="button" class="code-chip" data-copy="css" id="copyCssBtn" title="Zkopírovat CSS background">
+            <span class="chip-label">CSS</span>
+            <span>background</span>
+          </button>
+        </div>
+
+        <!-- Tlačítka akcí pro výsledek -->
+        <div class="result-actions">
+          <button type="button" class="btn" id="shareUrlBtn">
+            🔗 Sdílet odkaz
+          </button>
+          <button type="button" class="btn" id="saveRecipeBtn">
+            💾 Uložit směs do oblíbených
+          </button>
+          <button type="button" class="btn btn-danger" id="removeFavoriteBtn" style="display: none;" title="Odebrat tuto barvu z oblíbených">
+            🗑️ Odebrat z oblíbených
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barevné harmonie -->
+    <section class="card">
+      <div class="card-header">
+        <h2 class="card-title">Barevné harmonie k výsledku</h2>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">
+          Kliknutím na odstín jej zkopírujete do schránky
+        </span>
+      </div>
+
+      <div class="harmony-section" id="harmonyContainer">
+        <!-- Vkládáno dynamicky přes JS -->
+      </div>
+    </section>
+
+    <!-- Historie a Uložené směsi -->
+    <section class="card">
+      <div class="card-header">
+        <h2 class="card-title">Historie a uložené recepty</h2>
+        <button type="button" class="btn" id="clearHistoryBtn" style="font-size: 0.75rem; padding: 4px 10px;">
+          Vymazat historii
+        </button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="font-size: 0.825rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+          Poslední namíchané barvy (kliknutím načtete):
+        </h3>
+        <div class="history-list" id="historyList">
+          <!-- Vkládáno dynamicky přes JS -->
+        </div>
+      </div>
+
+      <div id="savedRecipesWrapper" style="display: none; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h3 style="font-size: 0.825rem; font-weight: 600; color: var(--text-muted); margin: 0;">
+            Oblíbené recepty:
+          </h3>
+          <button type="button" class="btn" id="clearSavedBtn" style="font-size: 0.75rem; padding: 4px 10px;" title="Odstranit všechny uložené recepty">
+            Vymazat oblíbené
+          </button>
+        </div>
+        <div class="history-list" id="savedRecipesList"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Toast kontejner -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Skripty aplikace -->
+  <script src="colorEngine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
